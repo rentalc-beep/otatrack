@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>OtaTrack — Tablette</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #F4F1EC;
+  --surface: #FFFFFF;
+  --accent: #D4380D;
+  --accent2: #FA8C16;
+  --dark: #1A1209;
+  --text: #2D2416;
+  --muted: #9C8B7A;
+  --border: #E5DDD4;
+  --green: #389E0D;
+  --blue: #1677FF;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body { font-family: 'Barlow', sans-serif; background: var(--bg); color: var(--text); }
+
+/* TOPBAR */
+.topbar { background: var(--dark); padding: 0 32px; height: 60px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+.logo { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 800; letter-spacing: 2px; color: #fff; }
+.logo span { color: var(--accent); }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.top-tag { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 5px 14px; font-size: 13px; color: rgba(255,255,255,0.65); }
+.top-tag.accent { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+
+/* SCREENS */
+.screen { display: none; min-height: calc(100vh - 60px); }
+.screen.active { display: block; }
+
+/* ── HOME ── */
+.home-wrap { max-width: 780px; margin: 0 auto; padding: 44px 24px; }
+.home-hello { font-size: 12px; font-weight: 700; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; margin-bottom: 6px; }
+.home-title { font-family: 'Barlow Condensed', sans-serif; font-size: 40px; font-weight: 800; color: var(--dark); margin-bottom: 6px; }
+.home-sub { font-size: 15px; color: var(--muted); margin-bottom: 36px; }
+
+/* PROFILE BANNER */
+.profile-banner {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.profile-banner:hover { border-color: var(--accent); }
+.profile-banner-left { display: flex; align-items: center; gap: 14px; }
+.profile-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; font-weight: 700; font-family: 'Barlow Condensed', sans-serif; }
+.profile-name { font-size: 16px; font-weight: 700; color: var(--dark); }
+.profile-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.profile-edit { font-size: 13px; color: var(--accent); font-weight: 600; }
+
+/* SHIFT SELECTOR */
+.shift-label { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; }
+.shift-row { display: flex; gap: 10px; margin-bottom: 32px; }
+.shift-card { flex: 1; background: var(--surface); border: 2px solid var(--border); border-radius: 14px; padding: 16px 20px; cursor: pointer; transition: all 0.18s; display: flex; align-items: center; gap: 12px; }
+.shift-card:hover { border-color: var(--muted); }
+.shift-card.active { border-color: var(--accent); background: rgba(212,56,13,0.04); }
+.shift-card-icon { font-size: 24px; }
+.shift-card-name { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; }
+.shift-card-time { font-size: 12px; color: var(--muted); }
+.shift-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border); margin-left: auto; transition: all 0.18s; }
+.shift-card.active .shift-dot { border-color: var(--accent); background: var(--accent); }
+
+/* SECTION TILES */
+.tiles-section-label { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 14px; }
+.tiles-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.tile {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  padding: 26px;
+  cursor: pointer;
+  transition: all 0.18s;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+}
+.tile::after { content:''; position:absolute; top:0;left:0;right:0;height:4px; border-radius:20px 20px 0 0; opacity:0; transition:opacity 0.18s; }
+.tile:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.08); }
+.tile:hover::after { opacity: 1; }
+.tile.t-red::after { background: var(--accent); }
+.tile.t-orange::after { background: var(--accent2); }
+.tile.t-blue::after { background: var(--blue); }
+.tile.t-green::after { background: var(--green); }
+.tile-icon { font-size: 34px; }
+.tile-title { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 800; color: var(--dark); }
+.tile-desc { font-size: 13px; color: var(--muted); line-height: 1.45; }
+.tile-arrow { font-size: 18px; color: var(--border); margin-top: auto; }
+
+.home-alert { background: rgba(212,56,13,0.06); border: 1px solid rgba(212,56,13,0.18); border-radius: 12px; padding: 13px 18px; font-size: 13px; color: var(--accent); display: flex; align-items: center; gap: 10px; }
+
+/* ── FORM SCREENS ── */
+.form-wrap { max-width: 700px; margin: 0 auto; padding: 32px 24px; }
+.back-btn { display: inline-flex; align-items: center; gap: 7px; color: var(--muted); font-size: 14px; font-weight: 500; cursor: pointer; margin-bottom: 22px; transition: color 0.15s; }
+.back-btn:hover { color: var(--accent); }
+.fh-title { font-family: 'Barlow Condensed', sans-serif; font-size: 34px; font-weight: 800; color: var(--dark); }
+.fh-meta { font-size: 14px; color: var(--muted); margin-top: 4px; margin-bottom: 26px; }
+.fh-prefill-note { display: inline-flex; align-items: center; gap: 7px; background: rgba(22,119,255,0.07); border: 1px solid rgba(22,119,255,0.2); border-radius: 8px; padding: 5px 12px; font-size: 12px; color: var(--blue); margin-bottom: 26px; }
+
+/* FCARD */
+.fcard { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 16px; overflow: hidden; }
+.fcard-head { display: flex; align-items: center; gap: 12px; padding: 15px 20px; border-bottom: 1px solid var(--border); background: #FDFBF8; }
+.fcard-icon { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; color: white; }
+.ic-red { background: var(--accent); }
+.ic-orange { background: var(--accent2); }
+.ic-green { background: var(--green); }
+.ic-blue { background: var(--blue); }
+.ic-dark { background: var(--dark); }
+.fcard-title { font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 700; }
+.fcard-sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
+.fcard-body { padding: 20px; }
+
+/* FORM INPUTS */
+.fg { margin-bottom: 14px; }
+.fg:last-child { margin-bottom: 0; }
+.fl { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 6px; display: block; }
+.fi { width: 100%; background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px; padding: 11px 14px; font-family: 'Barlow', sans-serif; font-size: 15px; color: var(--text); outline: none; transition: border-color 0.2s; }
+.fi:focus { border-color: var(--accent); }
+.fi:disabled { opacity: 0.5; background: #eee; cursor: not-allowed; }
+textarea.fi { resize: vertical; min-height: 80px; line-height: 1.5; }
+.form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+/* PRODUIT ROW */
+.produit-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); gap: 10px; }
+.produit-row:last-child { border-bottom: none; }
+.pr-name { font-size: 14px; font-weight: 600; flex: 1; }
+.pr-fields { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+.pr-field-wrap { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.pr-field-lbl { font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+
+/* Number stepper */
+.stepper { display: flex; align-items: center; gap: 5px; }
+.st-btn { width: 28px; height: 28px; border-radius: 7px; border: 1.5px solid var(--border); background: var(--bg); color: var(--text); font-size: 17px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; padding: 0; }
+.st-btn:hover { border-color: var(--accent); color: var(--accent); }
+.st-input { width: 46px; text-align: center; background: var(--bg); border: 1.5px solid var(--border); border-radius: 7px; padding: 5px 2px; font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; color: var(--dark); outline: none; transition: border-color 0.2s; -moz-appearance: textfield; }
+.st-input::-webkit-inner-spin-button { display: none; }
+.st-input:focus { border-color: var(--accent); }
+.st-input.has-val { color: var(--accent); border-color: rgba(212,56,13,.3); }
+
+/* Reste selector */
+.reste-wrap { display: flex; flex-direction: column; gap: 6px; }
+.gastro-picker { display: flex; gap: 5px; align-items: flex-end; }
+.gastro-opt { cursor: pointer; border-radius: 5px; padding: 3px; border: 2px solid transparent; transition: border-color 0.15s; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.gastro-opt:hover { border-color: var(--border); }
+.gastro-opt.selected { border-color: var(--accent); }
+.gastro-opt-label { font-size: 9px; font-weight: 700; color: var(--muted); letter-spacing: 0.5px; }
+.gastro-opt.selected .gastro-opt-label { color: var(--accent); }
+.reste-val-label { font-size: 11px; font-weight: 700; color: var(--muted); text-align: center; }
+.reste-val-label.has { color: var(--accent); }
+
+/* RADIO */
+.radio-group { display: flex; gap: 8px; flex-wrap: wrap; }
+.ro { flex: 1; min-width: 70px; padding: 10px 6px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--bg); font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; text-align: center; transition: all 0.15s; }
+.ro.r-green { border-color: var(--green); color: var(--green); background: rgba(56,158,13,.07); }
+.ro.r-orange { border-color: var(--accent2); color: var(--accent2); background: rgba(250,140,22,.07); }
+.ro.r-red { border-color: var(--accent); color: var(--accent); background: rgba(212,56,13,.07); }
+
+/* SUBMIT */
+.submit-btn { width: 100%; padding: 17px; background: var(--accent); color: white; border: none; border-radius: 14px; font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: 2px; cursor: pointer; transition: all 0.2s; margin-top: 6px; }
+.submit-btn:hover { background: #B52F08; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(212,56,13,.3); }
+
+/* QR SECTION */
+.qr-card { display: flex; align-items: center; gap: 22px; background: var(--bg); border: 1.5px solid var(--border); border-radius: 14px; padding: 20px; }
+.qr-visual { width: 96px; height: 96px; flex-shrink: 0; background: white; border: 1px solid var(--border); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+.qr-visual svg { width: 84px; height: 84px; }
+.qr-info-title { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+.qr-info-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+.qr-link { display: inline-block; margin-top: 8px; background: rgba(22,119,255,.08); border: 1px solid rgba(22,119,255,.2); border-radius: 20px; padding: 3px 12px; font-size: 11px; color: var(--blue); font-weight: 600; }
+
+/* PHOTO PREVIEW */
+.photo-upload-zone { border: 2px dashed var(--border); border-radius: 14px; padding: 36px 24px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--bg); margin-bottom: 14px; }
+.photo-upload-zone:hover { border-color: var(--accent); background: #FFF8F5; }
+.puz-icon { font-size: 40px; margin-bottom: 10px; }
+.puz-title { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+.puz-sub { font-size: 13px; color: var(--muted); }
+.puz-limit { display: inline-block; margin-top: 10px; background: rgba(212,56,13,.07); border: 1px solid rgba(212,56,13,.15); border-radius: 20px; padding: 3px 14px; font-size: 12px; color: var(--accent); font-weight: 600; }
+
+.photo-count-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.pc-lbl { font-size: 13px; color: var(--muted); }
+.pc-num { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; color: var(--accent); }
+.photo-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 14px; }
+.photo-cell { aspect-ratio: 1; border-radius: 10px; background: var(--border); overflow: hidden; position: relative; }
+.photo-cell img { width: 100%; height: 100%; object-fit: cover; }
+.photo-del { position: absolute; top: 5px; right: 5px; width: 20px; height: 20px; background: rgba(0,0,0,0.6); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; font-size: 11px; opacity: 0; transition: opacity 0.15s; }
+.photo-cell:hover .photo-del { opacity: 1; }
+
+/* SUCCESS */
+.success-wrap { max-width: 440px; margin: 0 auto; padding: 80px 24px; text-align: center; }
+.success-icon { font-size: 72px; margin-bottom: 20px; animation: pop .4s; }
+.success-title { font-family: 'Barlow Condensed', sans-serif; font-size: 42px; font-weight: 800; color: var(--green); margin-bottom: 8px; }
+.success-sub { font-size: 15px; color: var(--muted); margin-bottom: 32px; }
+.back-home-btn { padding: 12px 32px; border: 1.5px solid var(--border); background: transparent; border-radius: 10px; font-family: 'Barlow', sans-serif; font-size: 14px; font-weight: 600; color: var(--muted); cursor: pointer; transition: all 0.2s; }
+.back-home-btn:hover { border-color: var(--accent); color: var(--accent); }
+@keyframes pop { 0%{transform:scale(.5);opacity:0}70%{transform:scale(1.1)}100%{transform:scale(1)} }
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo">OTA<span>TRACK</span></div>
+  <div class="topbar-right">
+    <div class="top-tag" id="top-date"></div>
+    <div class="top-tag accent">Gare de l'Ouest</div>
+  </div>
+</div>
+
+<!-- ══ HOME ══ -->
+<div class="screen active" id="sc-home">
+  <div class="home-wrap">
+    <div class="home-hello">Bonjour</div>
+    <div class="home-title" id="home-title-name">Que souhaitez-vous faire ?</div>
+    <div class="home-sub">Remplissez d'abord vos informations, puis sélectionnez une section</div>
+
+    <!-- PROFILE BANNER -->
+    <div class="profile-banner" onclick="goTo('infos')">
+      <div class="profile-banner-left">
+        <div class="profile-avatar" id="home-avatar">?</div>
+        <div>
+          <div class="profile-name" id="home-profile-name">Mes informations</div>
+          <div class="profile-meta" id="home-profile-meta">Cliquez pour renseigner votre nom et sélectionner votre shift</div>
+        </div>
+      </div>
+      <div class="profile-edit">Modifier →</div>
+    </div>
+
+    <!-- SHIFT -->
+    <div class="shift-label">Shift de travail</div>
+    <div class="shift-row">
+      <div class="shift-card active" id="sh-matin" onclick="selectShift('matin')">
+        <div class="shift-card-icon">☀️</div>
+        <div>
+          <div class="shift-card-name">Matin</div>
+          <div class="shift-card-time">10h00 — 17h00</div>
+        </div>
+        <div class="shift-dot" id="sd-matin"></div>
+      </div>
+      <div class="shift-card" id="sh-soir" onclick="selectShift('soir')">
+        <div class="shift-card-icon">🌙</div>
+        <div>
+          <div class="shift-card-name">Soir</div>
+          <div class="shift-card-time">17h00 — 00h00</div>
+        </div>
+        <div class="shift-dot" id="sd-soir"></div>
+      </div>
+    </div>
+
+    <!-- TILES -->
+    <div class="tiles-section-label">Sections</div>
+    <div class="tiles-grid">
+      <div class="tile t-red" onclick="goTo('cuisine')">
+        <div class="tile-icon">🍳</div>
+        <div>
+          <div class="tile-title">Rapport Cuisine</div>
+          <div class="tile-desc">Sachets lancés (viandes, frites, tortillas, fromagère) + reste en gastros</div>
+        </div>
+        <div class="tile-arrow">→</div>
+      </div>
+      <div class="tile t-orange" onclick="goTo('caisse')">
+        <div class="tile-icon">💰</div>
+        <div>
+          <div class="tile-title">Rapport Caisse</div>
+          <div class="tile-desc">Qualité du service, temps d'attente client, problèmes et remarques</div>
+        </div>
+        <div class="tile-arrow">→</div>
+      </div>
+      <div class="tile t-blue" onclick="goTo('photos')">
+        <div class="tile-icon">📸</div>
+        <div>
+          <div class="tile-title">Photos Fermeture</div>
+          <div class="tile-desc">Maximum 8 photos — import depuis tablette ou via QR code (téléphone)</div>
+        </div>
+        <div class="tile-arrow">→</div>
+      </div>
+      <div class="tile t-green" onclick="goTo('infos')">
+        <div class="tile-icon">👤</div>
+        <div>
+          <div class="tile-title">Mes informations</div>
+          <div class="tile-desc">Nom et date — pré-remplis automatiquement dans tous les rapports</div>
+        </div>
+        <div class="tile-arrow">→</div>
+      </div>
+    </div>
+
+    <div class="home-alert">⚠️ Rapport Soir non encore soumis pour aujourd'hui</div>
+  </div>
+</div>
+
+<!-- ══ MES INFORMATIONS ══ -->
+<div class="screen" id="sc-infos">
+  <div class="form-wrap">
+    <div class="back-btn" onclick="goHome()">← Retour</div>
+    <div class="fh-title">👤 Mes informations</div>
+    <div class="fh-meta">Ces informations seront automatiquement pré-remplies dans les rapports Cuisine et Caisse</div>
+
+    <div class="fcard">
+      <div class="fcard-head">
+        <div class="fcard-icon ic-dark">👤</div>
+        <div>
+          <div class="fcard-title">Identité</div>
+          <div class="fcard-sub">Renseignez une seule fois — valable pour tous les rapports</div>
+        </div>
+      </div>
+      <div class="fcard-body">
+        <div class="form-row-2">
+          <div class="fg">
+            <label class="fl">Nom / Prénom</label>
+            <input class="fi" id="info-name" placeholder="Ex : Aminee B." oninput="updateProfile()"/>
+          </div>
+          <div class="fg">
+            <label class="fl">Date du rapport</label>
+            <input class="fi" type="date" id="info-date" onchange="updateProfile()"/>
+          </div>
+        </div>
+        <div class="fg" style="margin-bottom:0">
+          <label class="fl">Restaurant</label>
+          <input class="fi" value="Gare de l'Ouest" disabled/>
+        </div>
+      </div>
+    </div>
+
+    <button class="submit-btn" onclick="saveInfos()">✅ SAUVEGARDER</button>
+  </div>
+</div>
+
+<!-- ══ RAPPORT CUISINE ══ -->
+<div class="screen" id="sc-cuisine">
+  <div class="form-wrap">
+    <div class="back-btn" onclick="goHome()">← Retour</div>
+    <div class="fh-title">🍳 Rapport Cuisine</div>
+    <div class="fh-meta" id="cuisine-meta">—</div>
+    <div class="fh-prefill-note" id="cuisine-prefill-note" style="display:none">
+      ✓ Nom et date pré-remplis depuis "Mes informations"
+    </div>
+
+    <!-- Identité -->
+    <div class="fcard">
+      <div class="fcard-head"><div class="fcard-icon ic-red">👤</div><div><div class="fcard-title">Informations</div></div></div>
+      <div class="fcard-body">
+        <div class="form-row-2">
+          <div class="fg"><label class="fl">Nom / Prénom</label><input class="fi" id="c-name" placeholder="Ex : Aminee B."/></div>
+          <div class="fg"><label class="fl">Date</label><input class="fi" type="date" id="c-date"/></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Viandes + autres produits -->
+    <div class="fcard">
+      <div class="fcard-head">
+        <div class="fcard-icon ic-orange">📦</div>
+        <div>
+          <div class="fcard-title">Consommation — Sachets lancés</div>
+          <div class="fcard-sub">Indiquez les sachets lancés et ce qu'il reste en fin de service</div>
+        </div>
+      </div>
+      <div class="fcard-body">
+        <div style="font-size:10px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)">Viandes</div>
+        <div id="viandes-body"></div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin:16px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--border)">Autres produits</div>
+        <div id="autres-body"></div>
+      </div>
+    </div>
+
+    <!-- Remarques cuisine -->
+    <div class="fcard">
+      <div class="fcard-head"><div class="fcard-icon ic-green">💬</div><div><div class="fcard-title">Remarques</div><div class="fcard-sub">Optionnel — stock faible, équipements...</div></div></div>
+      <div class="fcard-body">
+        <textarea class="fi" id="c-remarques" placeholder="Ex : Stock merguez faible en fin de shift..."></textarea>
+      </div>
+    </div>
+
+    <button class="submit-btn" onclick="submitCuisine()">✅ SOUMETTRE LE RAPPORT CUISINE</button>
+  </div>
+</div>
+
+<!-- ══ RAPPORT CAISSE ══ -->
+<div class="screen" id="sc-caisse">
+  <div class="form-wrap">
+    <div class="back-btn" onclick="goHome()">← Retour</div>
+    <div class="fh-title">💰 Rapport Caisse</div>
+    <div class="fh-meta" id="caisse-meta">—</div>
+    <div class="fh-prefill-note" id="caisse-prefill-note" style="display:none">
+      ✓ Nom et date pré-remplis depuis "Mes informations"
+    </div>
+
+    <!-- Identité -->
+    <div class="fcard">
+      <div class="fcard-head"><div class="fcard-icon ic-orange">👤</div><div><div class="fcard-title">Informations</div></div></div>
+      <div class="fcard-body">
+        <div class="form-row-2">
+          <div class="fg"><label class="fl">Nom / Prénom</label><input class="fi" id="ca-name" placeholder="Ex : Ayoub K."/></div>
+          <div class="fg"><label class="fl">Date</label><input class="fi" type="date" id="ca-date"/></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Qualité service -->
+    <div class="fcard">
+      <div class="fcard-head"><div class="fcard-icon ic-blue">⭐</div><div><div class="fcard-title">Qualité du service</div><div class="fcard-sub">Évaluation du shift côté caisse et accueil</div></div></div>
+      <div class="fcard-body">
+        <div class="fg">
+          <label class="fl">Service global</label>
+          <div class="radio-group">
+            <div class="ro" onclick="setRo('ca-service','Fluide',this,'r-green')">✅ Fluide</div>
+            <div class="ro" onclick="setRo('ca-service','Moyen',this,'r-orange')">⚠️ Moyen</div>
+            <div class="ro" onclick="setRo('ca-service','Difficile',this,'r-red')">🔴 Difficile</div>
+          </div>
+        </div>
+        <div class="fg">
+          <label class="fl">Temps d'attente client</label>
+          <div class="radio-group">
+            <div class="ro" onclick="setRo('ca-attente','Bon',this,'r-green')">✅ Bon</div>
+            <div class="ro" onclick="setRo('ca-attente','Moyen',this,'r-orange')">⚠️ Moyen</div>
+            <div class="ro" onclick="setRo('ca-attente','Mauvais',this,'r-red')">🔴 Mauvais</div>
+          </div>
+        </div>
+        <div class="fg">
+          <label class="fl">Problème pendant le service ?</label>
+          <div class="radio-group">
+            <div class="ro" onclick="setRo('ca-pb','Non',this,'r-green'); showEl('ca-pb-detail',false)">Non</div>
+            <div class="ro" onclick="setRo('ca-pb','Oui',this,'r-red'); showEl('ca-pb-detail',true)">Oui</div>
+          </div>
+        </div>
+        <div class="fg" id="ca-pb-detail" style="display:none;margin-bottom:0">
+          <label class="fl">Si oui, décrivez</label>
+          <textarea class="fi" id="ca-pb-desc" placeholder="Description du problème..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Remarques caisse -->
+    <div class="fcard">
+      <div class="fcard-head"><div class="fcard-icon ic-green">💬</div><div><div class="fcard-title">Remarques</div><div class="fcard-sub">Optionnel</div></div></div>
+      <div class="fcard-body">
+        <textarea class="fi" id="ca-remarques" placeholder="Ex : File d'attente longue en soirée..."></textarea>
+      </div>
+    </div>
+
+    <button class="submit-btn" onclick="submitCaisse()">✅ SOUMETTRE LE RAPPORT CAISSE</button>
+  </div>
+</div>
+
+<!-- ══ PHOTOS ══ -->
+<div class="screen" id="sc-photos">
+  <div class="form-wrap">
+    <div class="back-btn" onclick="goHome()">← Retour</div>
+    <div class="fh-title">📸 Photos de Fermeture</div>
+    <div class="fh-meta">Maximum 8 photos · Gare de l'Ouest</div>
+
+    <!-- Upload tablette -->
+    <div class="fcard">
+      <div class="fcard-head"><div class="fcard-icon ic-blue">📷</div><div><div class="fcard-title">Importer depuis la tablette</div><div class="fcard-sub">Cliquez ou glissez-déposez</div></div></div>
+      <div class="fcard-body">
+        <div class="photo-count-row">
+          <span class="pc-lbl">Photos importées</span>
+          <span class="pc-num" id="photo-count">0 / 8</span>
+        </div>
+        <div class="photo-grid" id="photo-grid"></div>
+        <div class="photo-upload-zone" id="upload-zone"
+          onclick="document.getElementById('ph-input').click()"
+          ondragover="event.preventDefault();this.style.borderColor='var(--accent)'"
+          ondragleave="this.style.borderColor=''"
+          ondrop="onDrop(event)">
+          <div class="puz-icon">🗂️</div>
+          <div class="puz-title">Importer des photos</div>
+          <div class="puz-sub">Cliquez ici ou glissez vos photos</div>
+          <div class="puz-limit">Maximum 8 photos</div>
+          <input type="file" id="ph-input" style="display:none" multiple accept="image/*" onchange="addPhotos(this.files)"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- QR code upload téléphone -->
+    <div class="fcard">
+      <div class="fcard-head"><div class="fcard-icon ic-dark">📱</div><div><div class="fcard-title">Envoyer depuis le téléphone</div><div class="fcard-sub">Plus rapide — scannez et uploadez directement depuis votre téléphone</div></div></div>
+      <div class="fcard-body">
+        <div class="qr-card">
+          <div class="qr-visual">
+            <canvas id="qr-canvas" width="84" height="84"></canvas>
+          </div>
+          <div>
+            <div class="qr-info-title">QR Code — Session unique</div>
+            <div class="qr-info-desc">Scannez ce code avec l'appareil photo de votre téléphone. Vous serez redirigé vers une page pour uploader vos photos. Elles apparaîtront automatiquement ici.</div>
+            <div class="qr-link" id="qr-link-display">Génération en cours...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="submit-btn" onclick="submitPhotos()">📤 ENVOYER LES PHOTOS</button>
+  </div>
+</div>
+
+<!-- ══ SUCCESS ══ -->
+<div class="screen" id="sc-success">
+  <div class="success-wrap">
+    <div class="success-icon">✅</div>
+    <div class="success-title">Envoyé !</div>
+    <div class="success-sub" id="success-msg">Rapport enregistré</div>
+    <button class="back-home-btn" onclick="goHome()">← Retour à l'accueil</button>
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+const VIANDES = [
+  { id:"marine",  name:"Poulet Mariné",   hasReste:true },
+  { id:"nature",  name:"Poulet Nature",   hasReste:true },
+  { id:"hachee",  name:"Viande Hachée",  hasReste:true },
+  { id:"merguez", name:"Merguez",         hasReste:true },
+  { id:"kebab",   name:"Kebab",           hasReste:true },
+];
+const AUTRES = [
+  { id:"fromagere", name:"Sauce Fromagère",    hasReste:false },
+  { id:"frites",    name:"Sachets de Frites",      hasReste:false },
+  { id:"tortilla",  name:"Sachets de Tortilla",     hasReste:false },
+];
+const NIVEAUX = [
+  { val:"vide",  label:"Vide",  fill:0    },
+  { val:"1/4",   label:"1/4",   fill:1    },
+  { val:"1/3",   label:"1/3",   fill:1.33 },
+  { val:"1/2",   label:"1/2",   fill:2    },
+  { val:"3/4",   label:"3/4",   fill:3    },
+  { val:"plein", label:"Plein", fill:4    },
+];
+
+function drawGastroSVG(fill, selected, size) {
+  const W = size, H = Math.round(size * 1.35);
+  const pct = Math.min(fill / 4, 1);
+  const innerH = H * 0.70;
+  const innerY = H * 0.22;
+  const fillH  = innerH * pct;
+  const fillY  = innerY + innerH - fillH;
+  const col     = selected ? "#D4380D" : "#C8BFB5";
+  const fillCol = pct === 0 ? "none" : selected ? "#D4380D" : "#B4A99E";
+  return '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg">'
+    + '<rect x="4" y="' + Math.round(H*0.06) + '" width="' + (W-8) + '" height="' + Math.round(H*0.10) + '" rx="2" fill="' + col + '"/>'
+    + '<rect x="1.5" y="' + Math.round(innerY) + '" width="' + (W-3) + '" height="' + Math.round(innerH) + '" rx="3" fill="none" stroke="' + col + '" stroke-width="1.5"/>'
+    + (pct > 0 ? '<rect x="3" y="' + fillY.toFixed(1) + '" width="' + (W-6) + '" height="' + fillH.toFixed(1) + '" rx="2" fill="' + fillCol + '"/>' : '')
+    + '</svg>';
+}
+
+function mkGastroPicker(id) {
+  const restes = window.restesState || {};
+  const current = restes[id] || null;
+  return '<div class="gastro-picker" id="gp-' + id + '">'
+    + NIVEAUX.map(n => {
+        const sel = current === n.val;
+        return '<div class="gastro-opt' + (sel ? " selected" : "") + '" onclick="selectReste(\'' + id + '\',\'' + n.val + '\')" title="' + n.label + '">'
+          + drawGastroSVG(n.fill, sel, 26)
+          + '<div class="gastro-opt-label">' + n.label + '</div>'
+          + '</div>';
+      }).join("")
+    + '</div>';
+}
+
+// ── STATE ──
+let currentShift = "matin";
+let photoFiles   = [];
+let radios       = {};
+let profile      = { name: "", date: "" };
+window.restesState = {};
+
+// ── INIT ──
+window.addEventListener("DOMContentLoaded", () => {
+  const today = new Date();
+  document.getElementById("top-date").textContent =
+    today.toLocaleDateString("fr-BE",{weekday:"long",day:"numeric",month:"long"});
+  const iso = today.toISOString().split("T")[0];
+  document.getElementById("info-date").value = iso;
+  profile.date = iso;
+  renderViandes();
+  renderAutres();
+  generateQR();
+  selectShift("matin");
+});
+
+// ── SCREENS ──
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById("sc-" + id).classList.add("active");
+  window.scrollTo(0,0);
+}
+function goHome() { showScreen("home"); }
+function goTo(section) {
+  if (section === "cuisine" || section === "caisse") {
+    prefillFromProfile(section);
+  }
+  showScreen(section);
+}
+
+// ── SHIFT ──
+function selectShift(s) {
+  currentShift = s;
+  ["matin","soir"].forEach(sh => {
+    document.getElementById("sh-" + sh).classList.toggle("active", sh === s);
+    const dot = document.getElementById("sd-" + sh);
+    dot.style.background    = sh === s ? "var(--accent)" : "";
+    dot.style.borderColor   = sh === s ? "var(--accent)" : "";
+  });
+}
+
+// ── PROFILE ──
+function updateProfile() {
+  const name = document.getElementById("info-name").value.trim();
+  const date = document.getElementById("info-date").value;
+  profile.name = name;
+  profile.date = date;
+}
+
+function saveInfos() {
+  updateProfile();
+  const name = profile.name;
+  const av = document.getElementById("home-avatar");
+  const pn = document.getElementById("home-profile-name");
+  const pm = document.getElementById("home-profile-meta");
+  if (name) {
+    av.textContent = name[0].toUpperCase();
+    pn.textContent = name;
+    pm.textContent = "Cliquez pour modifier";
+    document.getElementById("home-title-name").textContent = "Bonjour, " + name.split(" ")[0] + " !";
+  }
+  goHome();
+}
+
+function prefillFromProfile(section) {
+  const prefix = section === "cuisine" ? "c" : "ca";
+  const nameEl = document.getElementById(prefix + "-name");
+  const dateEl = document.getElementById(prefix + "-date");
+  const noteEl = document.getElementById(section + "-prefill-note");
+  const metaEl = document.getElementById(section + "-meta");
+  if (profile.name) { nameEl.value = profile.name; }
+  if (profile.date) { dateEl.value = profile.date; }
+  const hasPrefill = profile.name || profile.date;
+  if (noteEl) noteEl.style.display = hasPrefill ? "inline-flex" : "none";
+  const shiftLabel = currentShift === "matin" ? "Matin ☀️ (10h–17h)" : "Soir 🌙 (17h–00h)";
+  if (metaEl) metaEl.textContent = "Shift " + shiftLabel + " · Gare de l'Ouest";
+}
+
+// ── RENDER PRODUITS ──
+function renderViandes() {
+  document.getElementById("viandes-body").innerHTML = VIANDES.map(v => mkRow(v)).join("");
+}
+function renderAutres() {
+  document.getElementById("autres-body").innerHTML = AUTRES.map(v => mkRow(v)).join("");
+}
+
+function mkRow(v) {
+  const resteHtml = v.hasReste ? [
+    '<div class="pr-field-wrap">',
+    '<div class="pr-field-lbl">Reste fin service</div>',
+    '<div class="reste-wrap">',
+    mkGastroPicker(v.id),
+    '<div class="reste-val-label" id="rv-' + v.id + '">— gastro</div>',
+    '</div>',
+    '</div>',
+  ].join("") : "";
+
+  return [
+    '<div class="produit-row">',
+    '<div class="pr-name">' + v.name + '</div>',
+    '<div class="pr-fields">',
+    '<div class="pr-field-wrap">',
+    '<div class="pr-field-lbl">Sachets lancés</div>',
+    '<div class="stepper">',
+    '<button class="st-btn" onclick="stepNi(\'' + v.id + '\',-1)">−</button>',
+    '<input class="st-input" id="ni-' + v.id + '" type="number" min="0" value="0" oninput="onNi(\'' + v.id + '\',this)"/>',
+    '<button class="st-btn" onclick="stepNi(\'' + v.id + '\',1)">+</button>',
+    '</div>',
+    '</div>',
+    resteHtml,
+    '</div>',
+    '</div>',
+  ].join("");
+}
+
+function stepNi(id, d) {
+  const el = document.getElementById("ni-" + id);
+  const v = Math.max(0, (parseInt(el.value)||0) + d);
+  el.value = v;
+  el.className = "st-input" + (v > 0 ? " has-val" : "");
+}
+function onNi(id, el) {
+  if (parseInt(el.value) < 0) el.value = 0;
+  el.className = "st-input" + (parseInt(el.value) > 0 ? " has-val" : "");
+}
+function selectReste(id, val) {
+  if (!window.restesState) window.restesState = {};
+  window.restesState[id] = window.restesState[id] === val ? null : val;
+  const current = window.restesState[id];
+  const picker = document.getElementById("gp-" + id);
+  if (picker) {
+    picker.querySelectorAll(".gastro-opt").forEach((opt, i) => {
+      const isSelected = current === NIVEAUX[i].val;
+      opt.className = "gastro-opt" + (isSelected ? " selected" : "");
+      opt.querySelector("svg").outerHTML;
+      opt.innerHTML = drawGastroSVG(NIVEAUX[i].fill, isSelected, 26)
+        + '<div class="gastro-opt-label">' + NIVEAUX[i].label + '</div>';
+      opt.className = "gastro-opt" + (isSelected ? " selected" : "");
+    });
+  }
+  const lbl = document.getElementById("rv-" + id);
+  if (lbl) {
+    lbl.textContent = current ? current + " gastro" : "— gastro";
+    lbl.className = "reste-val-label" + (current ? " has" : "");
+  }
+}
+
+// ── RADIO ──
+function setRo(key, val, el, cls) {
+  radios[key] = val;
+  el.closest(".radio-group").querySelectorAll(".ro").forEach(r => r.className = "ro");
+  el.classList.add(cls);
+}
+function showEl(id, show) { document.getElementById(id).style.display = show ? "block" : "none"; }
+
+// ── PHOTOS ──
+function addPhotos(files) {
+  const rem = 8 - photoFiles.length;
+  Array.from(files).slice(0, rem).forEach(f => photoFiles.push({ file:f, url:URL.createObjectURL(f) }));
+  renderPhotos();
+}
+function onDrop(e) {
+  e.preventDefault(); e.currentTarget.style.borderColor = "";
+  addPhotos(e.dataTransfer.files);
+}
+function removePhoto(i) { photoFiles.splice(i,1); renderPhotos(); }
+function renderPhotos() {
+  document.getElementById("photo-grid").innerHTML = photoFiles.map((p,i) =>
+    '<div class="photo-cell">'
+    + '<img src="' + p.url + '"/>'
+    + '<div class="photo-del" onclick="removePhoto(' + i + ')">✕</div>'
+    + '</div>'
+  ).join("");
+  document.getElementById("photo-count").textContent = photoFiles.length + " / 8";
+  const z = document.getElementById("upload-zone");
+  z.style.opacity = photoFiles.length >= 8 ? "0.4" : "1";
+  z.style.pointerEvents = photoFiles.length >= 8 ? "none" : "auto";
+}
+
+// ── QR CODE (simple canvas draw) ──
+function generateQR() {
+  const sessionId = Math.random().toString(36).slice(2,10).toUpperCase();
+  const fakeUrl = "otatrk.app/upload/" + sessionId;
+  document.getElementById("qr-link-display").textContent = fakeUrl;
+
+  const canvas = document.getElementById("qr-canvas");
+  const ctx = canvas.getContext("2d");
+  const S = 84;
+  ctx.fillStyle = "#fff";
+  ctx.fillRect(0,0,S,S);
+  ctx.fillStyle = "#1A1209";
+
+  // Draw a plausible QR-like pattern
+  const draw = (x,y,w,h) => ctx.fillRect(x,y,w,h);
+  const cell = 6;
+
+  // Corner squares
+  const corner = (ox,oy) => {
+    draw(ox,oy,7*cell,7*cell);
+    ctx.fillStyle="#fff"; draw(ox+cell,oy+cell,5*cell,5*cell);
+    ctx.fillStyle="#1A1209"; draw(ox+2*cell,oy+2*cell,3*cell,3*cell);
+  };
+  corner(0,0); corner(S-7*cell,0); corner(0,S-7*cell);
+  ctx.fillStyle="#1A1209";
+
+  // Random data dots (deterministic by sessionId charcode)
+  for(let r=0;r<14;r++){
+    for(let c=0;c<14;c++){
+      // skip corners
+      if((r<7&&c<7)||(r<7&&c>6)||(r>6&&c<7)) continue;
+      const idx = (r*14+c) % sessionId.length;
+      if(sessionId.charCodeAt(idx) % 3 !== 0) {
+        const px = c*cell+(S-14*cell)/2;
+        const py = r*cell+(S-14*cell)/2;
+        if(px>=0&&py>=0&&px+cell<=S&&py+cell<=S) draw(px,py,cell-1,cell-1);
+      }
+    }
+  }
+}
+
+// ── SUBMIT ──
+function submitCuisine() {
+  const name = document.getElementById("c-name").value.trim();
+  if (!name) { document.getElementById("c-name").focus(); return; }
+  const shift = currentShift === "matin" ? "Matin ☀️" : "Soir 🌙";
+  showSuccess("Rapport Cuisine · Shift " + shift + " · " + name + " · Enregistré ✓");
+}
+function submitCaisse() {
+  const name = document.getElementById("ca-name").value.trim();
+  if (!name) { document.getElementById("ca-name").focus(); return; }
+  const shift = currentShift === "matin" ? "Matin ☀️" : "Soir 🌙";
+  showSuccess("Rapport Caisse · Shift " + shift + " · " + name + " · Enregistré ✓");
+}
+function submitPhotos() {
+  if (!photoFiles.length) { alert("Importez au moins une photo."); return; }
+  showSuccess(photoFiles.length + " photo(s) de fermeture envoyée(s) ✓");
+  photoFiles = [];
+}
+function showSuccess(msg) {
+  document.getElementById("success-msg").textContent = msg;
+  showScreen("success");
+}
+</script>
+</body>
+</html>
