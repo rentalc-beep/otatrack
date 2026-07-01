@@ -1,120 +1,27 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>OtaTrack</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet"/>
-<style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: 'Barlow', sans-serif;
-  background: #0D0D0D;
-  color: #F0EDE8;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5.0" />
+  <meta name="theme-color" content="#17120E" />
+  <meta name="description" content="OtaTrack — gestion d'inventaire pour restaurants O'Tacos." />
 
-.logo {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 52px;
-  font-weight: 800;
-  letter-spacing: 4px;
-  margin-bottom: 8px;
-}
-.logo span { color: #D4380D; }
+  <!-- Installable comme une app (Android + iOS) -->
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="OtaTrack" />
 
-.tagline {
-  font-size: 14px;
-  color: #706860;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  margin-bottom: 60px;
-}
-
-.cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  width: 100%;
-  max-width: 560px;
-}
-
-.card {
-  background: #1C1C1C;
-  border: 1px solid #272220;
-  border-radius: 20px;
-  padding: 32px 28px;
-  text-decoration: none;
-  color: inherit;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  transition: all 0.2s;
-  position: relative;
-  overflow: hidden;
-}
-.card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-  border-radius: 20px 20px 0 0;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-.card:hover { transform: translateY(-4px); border-color: #3a3530; }
-.card:hover::before { opacity: 1; }
-.card.manager::before { background: #D4380D; }
-.card.tablette::before { background: #FA8C16; }
-
-.card-icon { font-size: 36px; }
-.card-title {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-}
-.card-desc { font-size: 13px; color: #706860; line-height: 1.5; }
-.card-arrow {
-  font-size: 20px;
-  color: #3a3530;
-  margin-top: auto;
-}
-
-.footer {
-  margin-top: 48px;
-  font-size: 12px;
-  color: #3a3530;
-  letter-spacing: 1px;
-}
-</style>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <title>OtaTrack — Gestion O'Tacos</title>
 </head>
 <body>
-
-<div class="logo">OTA<span>TRACK</span></div>
-<div class="tagline">Gestion Fermeture · Gare de l'Ouest</div>
-
-<div class="cards">
-  <a class="card manager" href="otacos-dashboard-v4.html">
-    <div class="card-icon">📊</div>
-    <div class="card-title">Dashboard Manager</div>
-    <div class="card-desc">Rapports, statistiques, calendrier et alertes</div>
-    <div class="card-arrow">→</div>
-  </a>
-  <a class="card tablette" href="otacos-desktop-v4.html">
-    <div class="card-icon">📝</div>
-    <div class="card-title">App Tablette</div>
-    <div class="card-desc">Rapport cuisine, caisse et photos de fermeture</div>
-    <div class="card-arrow">→</div>
-  </a>
-</div>
-
-<div class="footer">PROTOTYPE · v0.4 · 2026</div>
-
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>
